@@ -16,6 +16,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.Student;
+import service.GradeService;
 
 /**
  *
@@ -30,6 +31,7 @@ public class StudentManage extends javax.swing.JFrame {
     private DefaultTableModel dtm = new DefaultTableModel();
     private List<Student> list = new ArrayList<>();
     private StudentService studentDAO = new StudentService();
+    private GradeService gradeService = new GradeService();
 
     public StudentManage() {
         initComponents();
@@ -69,7 +71,7 @@ public class StudentManage extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Chưa nhập email");
             return false;
         }
-        
+
         if (!isValidEmail(txtEmail.getText())) {
             JOptionPane.showMessageDialog(this, "Sai đinh dang email");
             return false;
@@ -78,7 +80,7 @@ public class StudentManage extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Chưa nhập sdt");
             return false;
         }
-        
+
         if (!isValidPhoneNumber(txtSoDienThoai.getText())) {
             JOptionPane.showMessageDialog(this, "Sai đinh dang sdt");
             return false;
@@ -154,8 +156,7 @@ public class StudentManage extends javax.swing.JFrame {
         }
         return true;
     }
-    
-    
+
     public static boolean isValidEmail(String email) {
         // Regex cho định dạng email
         String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
@@ -170,8 +171,7 @@ public class StudentManage extends javax.swing.JFrame {
         return matcher.matches();
     }
 
-    
-     public static boolean isValidPhoneNumber(String phoneNumber) {
+    public static boolean isValidPhoneNumber(String phoneNumber) {
         // Regex cho số điện thoại có 10 đến 11 chữ số và đầu tiên là số 0
         String regex = "^0[0-9]{9,10}$";
 
@@ -184,6 +184,7 @@ public class StudentManage extends javax.swing.JFrame {
         // Kiểm tra xem chuỗi khớp với regex hay không
         return matcher.matches();
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -539,13 +540,19 @@ public class StudentManage extends javax.swing.JFrame {
         // TODO add your handling code here:
         int index = tblThongTin.getSelectedRow();
         if (index != -1) {
-            int isCheck = JOptionPane.showConfirmDialog(rootPane, "Co muon xoa", "Delete", JOptionPane.YES_OPTION);
-            if (isCheck == 0) {
-                JOptionPane.showMessageDialog(rootPane, "Xóa thành công");
-                studentDAO.xoa(getDataform());
-                showDataTable();
-                reset();
+            if (gradeService.selectById(txtMaSv.getText()) == null) {
+                int isCheck = JOptionPane.showConfirmDialog(rootPane, "Co muon xoa", "Delete", JOptionPane.YES_OPTION);
+                if (isCheck == 0) {
+                    JOptionPane.showMessageDialog(rootPane, "Xóa thành công");
+                    studentDAO.xoa(getDataform());
+                    showDataTable();
+                    reset();
+                }
+            } else {
+                
+                JOptionPane.showMessageDialog(this, "Sinh vien da co diem khong len xoa");
             }
+
         } else {
             JOptionPane.showMessageDialog(rootPane, "Chon dong can xoa");
         }
