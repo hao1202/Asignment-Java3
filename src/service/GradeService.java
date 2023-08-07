@@ -104,7 +104,8 @@ public class GradeService implements DAOInterface<Grade> {
         List<Grade> list = new ArrayList<>();
         Connection connection = ConnectDB.getConnection();
         String sql = "select top (3) ID , Grade.Masv , Hoten, TiengAnh , TinHoc , "
-                + "GDTC from Grade join Students on Grade.Masv = Students.Masv";
+                + "GDTC from Grade join Students on Grade.Masv = Students.Masv "
+                + "order by (TiengAnh + TinHoc + GDTC) / 3 desc";
         try {
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery(sql);
